@@ -127,8 +127,11 @@ muestran un teaser y nada se rompe. Para activarlas:
 3. Authentication → Providers → habilitar **Google** (client id/secret de
    Google Cloud Console) y agregar el dominio en Redirect URLs.
 4. En `.env.local` y en Vercel:
-   `NEXT_PUBLIC_SUPABASE_URL=...` y `NEXT_PUBLIC_SUPABASE_ANON_KEY=...`
-   (la anon key es pública por diseño; la seguridad la da RLS).
+   `NEXT_PUBLIC_SUPABASE_URL=...` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...`
+   (los proyectos nuevos entregan la publishable key `sb_publishable_...`;
+   los viejos, la anon key — el código acepta cualquiera de las dos en
+   `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` o `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+   Es pública por diseño; la seguridad la da RLS).
 
 El formulario tiene las dimensiones de la maqueta: plan (solo los que la
 bodega ofrece), vista con "sin vista a viñedos", calidad-precio, servicio,
