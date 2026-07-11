@@ -97,7 +97,8 @@ const SEED: Bodega[] = [
     pop: 98,
     vista: 4.6,
     descripcion: "La pirámide inspirada en Tikal y la bodega argentina más reconocida del mundo (#1 en World's Best Vineyards 2023).",
-    imagen: null,
+    imagen: "https://res.cloudinary.com/dhi892zhg/image/upload/f_auto,q_auto,w_1000/bodegas/catena-zapata",
+    imagenCredito: "ArgentinaWineTourism (CC BY-SA 3.0, Wikimedia Commons)",
     // Precios verificados 2025-2026: degustación La Pirámide ~180k; restaurante
     // Angélica (1 estrella Michelin) menú de pasos ~158k-209k p/p, sin maridaje.
     planes: { degustacion: 180000, almuerzo: 195000 },
@@ -127,7 +128,8 @@ const SEED: Bodega[] = [
     pop: 90,
     vista: 4.5,
     descripcion: "Cava subterránea histórica, el restaurante La Vid con vista a los Andes (Guía Michelin) y el famoso blending game.",
-    imagen: null,
+    imagen: "https://res.cloudinary.com/dhi892zhg/image/upload/f_auto,q_auto,w_1000/bodegas/bodega-norton",
+    imagenCredito: "ArgentinaWineTourism (CC BY-SA 3.0, Wikimedia Commons)",
     // Verificado 2025-2026: visita+cata ~36.5k; blending game (actividades) ~35k.
     // Se quitó "picnic": no se pudo confirmar que Norton lo ofrezca.
     planes: { visita: 36500, degustacion: 36500, almuerzo: 75000, actividades: 35000 },
@@ -142,7 +144,8 @@ const SEED: Bodega[] = [
     pop: 85,
     vista: 3.8,
     descripcion: "Bodega fundada en 1883; su emblemático edificio de estilo florentino (1912) fue restaurado para unir historia y vanguardia.",
-    imagen: null,
+    imagen: "https://res.cloudinary.com/dhi892zhg/image/upload/f_auto,q_auto,w_1000/bodegas/trapiche",
+    imagenCredito: "NMS_FW (CC BY-SA 4.0, Wikimedia Commons)",
     // Verificado 2025-2026: tour+cata ~36k; tour+almuerzo (Espacio Trapiche,
     // Guía Michelin, 4 pasos con maridaje) ~162k.
     planes: { visita: 36000, degustacion: 36000, almuerzo: 162000 },
@@ -172,7 +175,8 @@ const SEED: Bodega[] = [
     pop: 82,
     vista: 4.8,
     descripcion: "Bodega-templo con el centro cultural Killka y su galería de arte propia, entre viñedos de altura.",
-    imagen: null,
+    imagen: "https://res.cloudinary.com/dhi892zhg/image/upload/f_auto,q_auto,w_1000/bodegas/salentein",
+    imagenCredito: "Bormidayanzon (CC BY-SA 4.0, Wikimedia Commons)",
     // 2025-2026: visita+cata ~42k; almuerzo 3 pasos en Killka ~64k. Se quitó
     // "picnic": no figura en la oferta oficial de Salentein.
     planes: { visita: 42000, degustacion: 42000, almuerzo: 82000 },
@@ -217,7 +221,8 @@ const SEED: Bodega[] = [
     pop: 78,
     vista: 4.6,
     descripcion: "Arquitectura de pirca (piedra apilada), espumantes y el espacio culinario María Codorníu con vista a los Andes. Tapeo y atardeceres.",
-    imagen: null,
+    imagen: "https://res.cloudinary.com/dhi892zhg/image/upload/f_auto,q_auto,w_1000/bodegas/bodega-septima",
+    imagenCredito: "Bormidayanzon (CC BY-SA 4.0, Wikimedia Commons)",
     // Verificado 2025: tour+cata ~27k; almuerzo (María Codorníu, 3 tiempos) ~64k.
     // Se quitó "picnic": no se pudo confirmar que Séptima lo ofrezca.
     planes: { degustacion: 27000, almuerzo: 64000 },
