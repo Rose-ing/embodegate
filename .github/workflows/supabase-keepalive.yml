@@ -1,0 +1,25 @@
+# El plan free de Supabase pausa el proyecto tras 7 días sin actividad en la
+# base. Este ping semanal (lunes 12:00 UTC) hace una consulta mínima para
+# mantenerlo despierto. La URL y la publishable key son públicas por diseño
+# (van en el HTML de cada visitante), así que pueden vivir acá sin riesgo.
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: "0 12 * * 1" # lunes 12:00 UTC (9:00 en Mendoza)
+  workflow_dispatch: {} # y a mano desde la pestaña Actions, por si acaso
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Consulta mínima a la tabla resenas
+        run: |
+          set -e
+          URL="https://ljezkftdynbaqxmzzmyx.supabase.co"
+          KEY="sb_publishable_ulRDvHoE39c22Fx02TZ9pQ_-qqp5at0"
+          code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "$URL/rest/v1/resenas?select=id&limit=1" \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY")
+          echo "HTTP $code"
+          test "$code" = "200"
