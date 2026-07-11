@@ -44,6 +44,7 @@ export interface Bodega {
   vista: number | null;         // research: qué tan linda la vista (0-5). null = NO tiene vista
   descripcion: string;
   imagen: string | null;        // URL de la foto representativa. null = placeholder por gradiente
+  imagenCredito?: string | null; // atribución de la foto (autor + licencia CC), se muestra en la ficha
   // precio "desde" por persona en ARS para cada plan. null = la bodega NO ofrece ese plan.
   planes: Partial<Record<Plan, number | null>>;
   detalleCargado: boolean;      // true = research a fondo. false = solo cobertura base

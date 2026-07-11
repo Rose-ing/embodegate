@@ -1,9 +1,16 @@
-import Anthropic from "@anthropic-ai/sdk";
-
-// Parser de búsqueda en lenguaje natural. Recibe { q }, devuelve el JSON de
-// filtros que el cliente aplica con la misma lógica de Catalogo.tsx.
-// Si falla (sin key, error de red, JSON inválido) devuelve { error } con 200
-// para que el cliente caiga limpio al parseLocal de respaldo.
+// Parser de búsqueda en lenguaje natural, vía OpenRouter.
+// Recibe { q }, devuelve el JSON de filtros que el cliente aplica con la
+// misma lógica de Catalogo.tsx.
+//
+// Estrategia de costo: el primer modelo es GRATIS; si su proveedor está
+// saturado o falla, OpenRouter cae solo al siguiente (Llama 3.1 8B,
+// ~US$0.02/M tokens: fracciones de centavo por búsqueda). Si todo falla,
+// devolvemos { error } con 200 y el cliente usa su intérprete local.
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+const MODELS = [
+  "qwen/qwen3-next-80b-a3b-instruct:free",
+  "meta-llama/llama-3.1-8b-instruct",
+];
 
 const SYSTEM = `Sos un parser de búsqueda para un directorio de bodegas de Mendoza, Argentina.
 Convertí el texto del usuario (español rioplatense, puede traer lunfardo) en un JSON con EXACTAMENTE estas claves:
@@ -11,7 +18,7 @@ Convertí el texto del usuario (español rioplatense, puede traer lunfardo) en u
 "lucas"/"luca"/"mil"/"mangos"/"k" multiplican por mil (50 lucas = 50000). "barato"/"sin gastar una fortuna"/"económico" => orden "price-asc". "linda vista"/"con vista"/"paisaje" => vista true. "sin vista" => vista false. Valle de Uco incluye Tunuyán, Tupungato, Gualtallary, Altamira. Respondé SOLO el JSON, sin texto ni backticks.`;
 
 export async function POST(req: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.OPENROUTER_API_KEY) {
     return Response.json({ error: "no_key" }, { status: 200 });
   }
 
@@ -26,17 +33,32 @@ export async function POST(req: Request) {
   }
 
   try {
-    const anthropic = new Anthropic(); // toma ANTHROPIC_API_KEY del env
-    const msg = await anthropic.messages.create({
-      model: "claude-haiku-4-5-20251001", // barato y rápido; alcanza de sobra para parsear
-      max_tokens: 300,
-      system: SYSTEM,
-      messages: [{ role: "user", content: q }],
+    const res = await fetch(OPENROUTER_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+        // Opcionales de OpenRouter: identifican la app en sus rankings.
+        "HTTP-Referer": "https://embodegate.com",
+        "X-Title": "embodegate",
+      },
+      body: JSON.stringify({
+        models: MODELS, // primero el gratis; OpenRouter hace el fallback solo
+        max_tokens: 300,
+        temperature: 0,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: SYSTEM },
+          { role: "user", content: q.slice(0, 500) },
+        ],
+      }),
+      signal: AbortSignal.timeout(8000),
     });
-    const text = msg.content
-      .filter((b) => b.type === "text")
-      .map((b) => (b as { text: string }).text)
-      .join("");
+    if (!res.ok) {
+      return Response.json({ error: "upstream_" + res.status }, { status: 200 });
+    }
+    const data = await res.json();
+    const text: string = data.choices?.[0]?.message?.content ?? "";
     return Response.json(JSON.parse(text.replace(/```json|```/g, "").trim()));
   } catch {
     return Response.json({ error: "parse_failed" }, { status: 200 });

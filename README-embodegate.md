@@ -11,7 +11,7 @@ Directorio de las bodegas de Mendoza con filtros, buscador en lenguaje natural y
 - **Next.js (App Router) + TypeScript** — hosting gratis en Vercel, SEO de fábrica, sin servidor que mantener.
 - **Catálogo en archivo** (`data/bodegas.ts`) — única fuente de verdad. Actualizar = editar y push.
 - **Tailwind** (opcional pero recomendado) para portar los estilos de la maqueta rápido.
-- **Una API route** para el buscador en lenguaje natural (llama a Claude con la key en el servidor).
+- **Una API route** para el buscador en lenguaje natural (llama a OpenRouter con la key en el servidor; modelo gratis con fallback pago baratísimo).
 
 No usar el stack de deMas (Express + Prisma + Postgres + Railway): es un servidor 24/7 que se paga corra o no corra gente, innecesario para un sitio casi todo de lectura.
 
@@ -27,12 +27,12 @@ embodegate/
 │  ├─ Catalogo.tsx         # 'use client' — estado de filtros, buscador, grilla de cards
 │  ├─ bodega/[slug]/page.tsx  # ficha individual (SEO) — opcional para el MVP, recomendado
 │  └─ api/
-│     └─ search/route.ts   # POST: texto libre → JSON de filtros (Claude)
+│     └─ search/route.ts   # POST: texto libre → JSON de filtros (OpenRouter)
 ├─ data/
 │  └─ bodegas.ts           # el catálogo (ya armado, ver archivo aparte)
 ├─ public/
 │  └─ bodegas/             # fotos representativas (o usar Cloudinary)
-├─ .env.local              # ANTHROPIC_API_KEY=...
+├─ .env.local              # OPENROUTER_API_KEY=...
 └─ package.json
 ```
 
@@ -43,9 +43,8 @@ embodegate/
 ```bash
 npx create-next-app@latest embodegate --typescript --tailwind --app
 cd embodegate
-npm i @anthropic-ai/sdk
 # copiar data/bodegas.ts al repo
-echo "ANTHROPIC_API_KEY=tu_key" > .env.local
+echo "OPENROUTER_API_KEY=tu_key" > .env.local
 ```
 
 La maqueta `embodegate.html` es la **referencia visual y de comportamiento**: la paleta (malbec #6A1B47, oliva, ámbar), las fuentes, las cards, el modal y la lógica de filtros ya están resueltos ahí. Portar, no reinventar.
@@ -74,37 +73,14 @@ Una bodega entra si: coincide zona, ofrece al menos uno de los planes marcados, 
 
 ## El buscador en lenguaje natural
 
-`app/api/search/route.ts` — recibe el texto, le pide a Claude que lo traduzca a filtros, devuelve JSON. El cliente aplica esos filtros con la misma lógica de arriba.
+`app/api/search/route.ts` — recibe el texto, se lo manda a **OpenRouter** (fetch directo, sin SDK) para traducirlo a filtros, devuelve JSON. El cliente aplica esos filtros con la misma lógica de arriba. Ver el archivo para el prompt completo.
 
-```ts
-import Anthropic from "@anthropic-ai/sdk";
-const anthropic = new Anthropic(); // toma ANTHROPIC_API_KEY del env
+Cadena de modelos (OpenRouter hace el fallback automáticamente con el parámetro `models`):
 
-const SYSTEM = `Sos un parser de búsqueda para un directorio de bodegas de Mendoza, Argentina.
-Convertí el texto del usuario (español rioplatense, puede traer lunfardo) en un JSON con EXACTAMENTE estas claves:
-{"zona":"lujan"|"maipu"|"uco"|"chacras"|"este"|"sur"|null,"planes":array de ["visita","degustacion","almuerzo","picnic","actividades"],"precio_max":número en pesos o null,"vista":true|false|null,"orden":"rating"|"price-asc"|"price-desc"|null}
-"lucas"/"luca"/"mil"/"mangos"/"k" multiplican por mil (50 lucas = 50000). "barato"/"sin gastar una fortuna"/"económico" => orden "price-asc". "linda vista"/"con vista"/"paisaje" => vista true. "sin vista" => vista false. Valle de Uco incluye Tunuyán, Tupungato, Gualtallary, Altamira. Respondé SOLO el JSON, sin texto ni backticks.`;
-
-export async function POST(req: Request) {
-  const { q } = await req.json();
-  try {
-    const msg = await anthropic.messages.create({
-      model: "claude-haiku-4-5-20251001", // barato y rápido; alcanza de sobra para parsear
-      max_tokens: 300,
-      system: SYSTEM,
-      messages: [{ role: "user", content: q }],
-    });
-    const text = msg.content.filter((b) => b.type === "text").map((b: any) => b.text).join("");
-    return Response.json(JSON.parse(text.replace(/```json|```/g, "").trim()));
-  } catch {
-    return Response.json({ error: "parse_failed" }, { status: 200 });
-  }
-}
-```
+1. `qwen/qwen3-next-80b-a3b-instruct:free` — gratis.
+2. `meta-llama/llama-3.1-8b-instruct` — ~US$0.02/M tokens; solo se usa si el gratis está saturado. Fracciones de centavo por búsqueda.
 
 Mantené el **intérprete local** de la maqueta (`parseLocal`) como fallback en el cliente: si la API falla o tarda, igual filtra. Así el buscador nunca queda colgado.
-
-> Costo: con Haiku, cada búsqueda son fracciones de centavo. Se puede cachear en memoria las queries repetidas si querés bajarlo a casi nada.
 
 ---
 
@@ -129,7 +105,7 @@ La frecuencia de actualización: las top, cada 2-3 semanas; el resto, cuando pue
 
 ## Deploy
 
-1. Push a GitHub → importar en **Vercel** (free). Cargá `ANTHROPIC_API_KEY` en las env vars de Vercel.
+1. Push a GitHub → importar en **Vercel** (free). Cargá `OPENROUTER_API_KEY` en las env vars de Vercel.
 2. Apuntá **embodegate.com** a Vercel (registro del dominio + DNS).
 3. **Monetización:**
    - Tu link de **Cafecito** en el header y footer (ya está en la maqueta).

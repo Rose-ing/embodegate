@@ -87,6 +87,9 @@ export default async function BodegaPage({
           <div className="fichahero" style={{ backgroundImage: bodegaBg(b) }}>
             <span className="fzone">{ZONA_LABEL[b.zona]}</span>
             <h1>{b.nombre}</h1>
+            {b.imagen && b.imagenCredito && (
+              <span className="fcredit">Foto: {b.imagenCredito}</span>
+            )}
           </div>
 
           <div className="fichabody">

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { BODEGAS } from "@/data/bodegas";
 import Catalogo from "./Catalogo";
 import Footer from "./Footer";
@@ -7,25 +6,21 @@ import Footer from "./Footer";
 export default function Home() {
   return (
     <>
-      <div className="wrap topbar">
-        <Link className="brandmini" href="/">
-          em<b>bodega</b>te
-        </Link>
-        <a
-          className="cafecito"
-          href="https://cafecito.app/"
-          target="_blank"
-          rel="noopener"
-        >
-          ☕ Invitame un cafecito
-        </a>
-      </div>
-
       <header>
-        <div className="wrap">
-          <h1>
-            ¿A cuál <em>vas</em>?
+        <div className="wrap herorow">
+          <h1 className="brand">
+            em<b>bodega</b>te
           </h1>
+          <a
+            className="cafecito"
+            href="https://cafecito.app/"
+            target="_blank"
+            rel="noopener"
+          >
+            ☕ Invitame un cafecito
+          </a>
+        </div>
+        <div className="wrap">
           <p className="lede">
             Todas las bodegas de Mendoza — pedímelo como te salga y te filtro
             las que valen la pena.

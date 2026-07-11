@@ -396,9 +396,9 @@ export default function Catalogo({ bodegas }: { bodegas: Bodega[] }) {
 
           <p className="protonote">
             <b>Prototipo.</b> Los precios son orientativos y pueden cambiar; confirmá siempre
-            con la bodega. El buscador usa Claude para interpretar lo que escribís, con un
-            intérprete local de respaldo. Las reseñas de la comunidad llegan en la próxima
-            fase; por ahora cada bodega linkea a su ficha real en Google.
+            con la bodega. El buscador usa inteligencia artificial para interpretar lo que
+            escribís, con un intérprete local de respaldo. Las reseñas de la comunidad llegan
+            en la próxima fase; por ahora cada bodega linkea a su ficha real en Google.
           </p>
         </div>
       </main>

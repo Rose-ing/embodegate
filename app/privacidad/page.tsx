@@ -32,10 +32,10 @@ export default function PrivacidadPage() {
           <h2>2. Búsquedas en lenguaje natural</h2>
           <p>
             Cuando usás el buscador, el texto que escribís se envía a nuestro
-            servidor y se procesa con la API de Anthropic (Claude) únicamente
-            para traducirlo a filtros de búsqueda. No lo asociamos a tu
-            identidad ni lo usamos con otros fines. Evitá incluir datos
-            personales en tus búsquedas.
+            servidor y se procesa mediante la API de OpenRouter (un servicio de
+            modelos de inteligencia artificial) únicamente para traducirlo a
+            filtros de búsqueda. No lo asociamos a tu identidad ni lo usamos
+            con otros fines. Evitá incluir datos personales en tus búsquedas.
           </p>
 
           <h2>3. Cookies y analítica</h2>
