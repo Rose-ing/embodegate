@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>embodegate · Todas las bodegas de Mendoza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4EFF0; --surface:#FFFFFF; --ink:#211A1E; --muted:#796E74;
+    --malbec:#6A1B47; --malbec-soft:#F3E7EC; --oliva:#6F7741; --oliva-soft:#EEF0E2;
+    --amber:#BE8419; --gblue:#3367D6; --line:#E7DDE0; --line-strong:#D8CACF; --cafe:#A8551F;
+    --radius:14px; --shadow:0 1px 2px rgba(33,26,30,.04), 0 8px 24px -16px rgba(84,18,55,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Hanken Grotesk",system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 22px}
+
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:15px 0}
+  .brandmini{font-family:"Fraunces",serif;font-weight:600;font-size:20px;letter-spacing:-.02em}
+  .brandmini b{color:var(--malbec);font-weight:600}
+  .cafecito{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:#fff;background:var(--cafe);border:none;border-radius:9px;padding:8px 13px;cursor:pointer;text-decoration:none}
+  .cafecito:hover{background:#8f461a}
+
+  header{padding:8px 0 18px}
+  .eyebrow{font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--malbec);font-weight:600;margin-bottom:10px}
+  h1{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(30px,4.4vw,48px);line-height:1;letter-spacing:-.02em}
+  h1 em{font-style:italic;color:var(--malbec);font-weight:500}
+  .lede{margin-top:9px;color:var(--muted);font-size:15.5px}
+
+  .nlbox{margin-top:18px;max-width:840px}
+  .nlrow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+  .nlrow .nlfield{flex:1;min-width:260px;margin:0}
+  .sorttop{box-shadow:var(--shadow);border-radius:12px;font-weight:600;padding:0 14px}
+  .nlfield{display:flex;gap:10px;background:var(--surface);border:1px solid var(--line-strong);border-radius:12px;padding:7px 7px 7px 16px;box-shadow:var(--shadow);transition:border-color .16s}
+  .nlfield:focus-within{border-color:var(--malbec)}
+  .nlfield input{flex:1;border:none;outline:none;font:inherit;font-size:16px;background:none;color:var(--ink)}
+  .nlfield input::placeholder{color:var(--muted)}
+  .nlfield button{font:inherit;font-weight:600;font-size:14px;background:var(--malbec);color:#fff;border:none;border-radius:8px;padding:11px 18px;cursor:pointer;white-space:nowrap;transition:background .16s}
+  .nlfield button:hover{background:#54123a}
+  .nlfield button:disabled{opacity:.6;cursor:default}
+  .nlhints{margin-top:9px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+  .nlhints .lab{font-size:12.5px;color:var(--muted)}
+  .nlhint{font:inherit;font-size:12.5px;color:var(--malbec);background:var(--malbec-soft);border:none;border-radius:7px;padding:5px 10px;cursor:pointer}
+  .nlhint:hover{background:#ecd9e1}
+  .understood{margin-top:12px;font-size:13.5px;color:var(--muted);display:none;align-items:center;gap:8px;flex-wrap:wrap}
+  .understood.show{display:flex}
+  .understood .uchip{background:var(--oliva-soft);color:var(--oliva);font-weight:600;border-radius:6px;padding:3px 9px;font-size:12.5px}
+
+  .filters{position:sticky;top:0;z-index:20;background:rgba(244,239,240,.9);backdrop-filter:blur(10px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0}
+  .frow{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+  .fgroup{display:flex;flex-direction:column;gap:7px}
+  .fgroup>span.title{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{font:inherit;font-size:13.5px;font-weight:500;padding:6px 12px;border-radius:999px;cursor:pointer;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);transition:all .16s;white-space:nowrap}
+  .chip:hover{border-color:var(--malbec)}
+  .chip[aria-pressed="true"]{background:var(--malbec);border-color:var(--malbec);color:#fff}
+  .chip.plan[aria-pressed="true"]{background:var(--oliva);border-color:var(--oliva);color:#fff}
+  .chip.extra[aria-pressed="true"]{background:var(--amber);border-color:var(--amber);color:#fff}
+  .budget{min-width:220px}
+  .budget .bval{font-weight:700;font-size:11.5px;color:var(--malbec);text-transform:none;letter-spacing:0;font-variant-numeric:tabular-nums}
+  .budget .bval.off{color:var(--muted);font-weight:600}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--line-strong);border-radius:99px;margin-top:15px;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--malbec);border:3px solid #fff;box-shadow:0 1px 4px rgba(84,18,55,.4);cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--malbec);border:3px solid #fff;box-shadow:0 1px 4px rgba(84,18,55,.4);cursor:pointer}
+  .ftail{display:flex;align-items:center;gap:14px;margin-left:auto;align-self:center}
+  .sortsel{font:inherit;font-size:13.5px;font-weight:500;color:var(--ink);border:1px solid var(--line-strong);background:var(--surface);border-radius:9px;padding:8px 11px;cursor:pointer}
+  .zonasel{min-width:160px;border-radius:999px;padding:7px 13px}
+  .clearbtn{font:inherit;font-size:13px;font-weight:600;color:var(--malbec);background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:6px 0}
+  .clearbtn:disabled{color:var(--muted);opacity:.5;cursor:default;text-decoration:none}
+
+  main{padding:20px 0 40px}
+  .resultline{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:16px;font-size:14px;color:var(--muted)}
+  .resultline .rcount{font-family:"Fraunces",serif;font-weight:600;font-size:24px;color:var(--malbec);font-variant-numeric:tabular-nums;line-height:1}
+  .resultline .rcov{font-size:12.5px}
+
+  .adslot{border:1.5px dashed var(--line-strong);border-radius:var(--radius);background:linear-gradient(180deg,#fff,#fbf7f8);padding:13px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .adslot .adleft{display:flex;flex-direction:column;gap:1px}
+  .adslot .adlabel{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .adslot .adtitle{font-family:"Fraunces",serif;font-weight:600;font-size:17px}
+  .adslot .adcta{font:inherit;font-weight:600;font-size:13px;color:#fff;background:var(--malbec);border:none;border-radius:9px;padding:9px 15px;cursor:pointer;white-space:nowrap}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;cursor:pointer;overflow:hidden;animation:rise .34s cubic-bezier(.2,.7,.3,1) both;transition:transform .18s,box-shadow .18s}
+  .card:hover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(33,26,30,.05),0 18px 38px -20px rgba(84,18,55,.32)}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .cimg{height:138px;background-size:cover;background-position:center;position:relative;display:flex;align-items:flex-end;padding:12px 14px}
+  .cimg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(20,12,16,.55))}
+  .cimg .cname{position:relative;z-index:1;color:#fff;font-family:"Fraunces",serif;font-weight:600;font-size:21px;line-height:1.05;text-shadow:0 1px 6px rgba(0,0,0,.4)}
+  .cimg .czone{position:absolute;top:11px;left:12px;z-index:1;background:rgba(255,255,255,.92);color:var(--ink);font-size:11px;font-weight:600;padding:3px 9px;border-radius:7px}
+  .cbody{padding:13px 18px 18px;display:flex;flex-direction:column;flex-grow:1}
+  .cratings{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+  .rchip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;padding:4px 9px;border-radius:8px;text-decoration:none;color:var(--ink)}
+  .rchip .star{font-size:12px}
+  .rchip .rsrc{font-weight:500;font-size:11px;color:var(--muted)}
+  .rchip.g{background:#EEF1FA;position:relative}
+  .rchip.g .star{color:var(--gblue)}
+  .rchip.g:hover{background:#e3e9f7}
+  .rchip.g .gtip{position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:11px;font-weight:500;padding:5px 9px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s}
+  .rchip.g:hover .gtip{opacity:1}
+  .rchip.c{background:var(--malbec-soft)}
+  .rchip.c .star{color:var(--malbec)}
+  .rchip.none{background:var(--bg);color:var(--muted);font-weight:500;border:1px dashed var(--line-strong)}
+  .loc{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .loc::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--oliva)}
+  .desc{font-size:14px;color:var(--ink);opacity:.82;margin-top:9px;flex-grow:1}
+  .dimrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:11px;align-items:center}
+  .dimmini{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+  .dimmini b{color:var(--ink);font-weight:600}
+  .dimmini.novista{color:var(--malbec)}
+  .dimmini.first{color:var(--oliva)}
+  .planes{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+  .ptag{font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:6px;background:var(--oliva-soft);color:var(--oliva)}
+  .ptag.hit{background:var(--oliva);color:#fff}
+  .pricerow{margin-top:13px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-end}
+  .from-lab{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .from-val{font-family:"Fraunces",serif;font-weight:600;font-size:24px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1;margin-top:3px}
+  .from-val.free{color:var(--oliva)}
+  .per{font-size:12px;color:var(--muted);font-weight:400;font-family:"Hanken Grotesk",sans-serif}
+  .planprice{text-align:right}
+  .pl-lab{font-size:11px;color:var(--malbec);font-weight:600;text-transform:capitalize}
+  .pl-val{font-family:"Fraunces",serif;font-weight:600;font-size:18px;color:var(--malbec);font-variant-numeric:tabular-nums}
+
+  .empty{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1}
+  .empty h3{font-family:"Fraunces",serif;font-size:25px;color:var(--ink);margin-bottom:10px;font-weight:600}
+  .empty button{margin-top:16px;font:inherit;font-weight:600;font-size:14px;background:var(--malbec);color:#fff;border:none;border-radius:9px;padding:11px 20px;cursor:pointer}
+
+  footer{border-top:1px solid var(--line);background:var(--surface)}
+  footer .winner{padding:28px 0;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+  footer .fbrand{font-family:"Fraunces",serif;font-weight:600;font-size:18px}
+  footer .fbrand b{color:var(--malbec)}
+  footer .fnote{font-size:13px;color:var(--muted);max-width:44ch;margin-top:4px}
+  .protonote{padding:16px 0 28px;font-size:12.5px;color:var(--muted);max-width:66ch}
+  .protonote b{color:var(--ink)}
+
+  .overlay{position:fixed;inset:0;background:rgba(33,26,30,.42);backdrop-filter:blur(3px);z-index:50;display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto}
+  .overlay.show{display:flex}
+  .modal{background:var(--surface);border-radius:18px;max-width:720px;width:100%;box-shadow:0 30px 80px -20px rgba(33,26,30,.5);animation:pop .26s cubic-bezier(.2,.7,.3,1) both;overflow:hidden}
+  @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+  .modal .mhead{padding:26px 28px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+  .modal h2{font-family:"Fraunces",serif;font-weight:600;font-size:30px;line-height:1.02;letter-spacing:-.01em}
+  .modal .mloc{font-size:13.5px;color:var(--muted);margin-top:6px}
+  .mrate{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .closeb{font:inherit;font-size:22px;line-height:1;color:var(--muted);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:8px}
+  .closeb:hover{background:var(--bg);color:var(--ink)}
+  .photos{display:flex;gap:8px;padding:18px 28px 0;overflow-x:auto}
+  .photo{flex:0 0 150px;height:104px;border-radius:11px;display:grid;place-items:end;padding:10px;color:#fff;font-size:11px;font-weight:600;background-size:cover;background-position:center;position:relative;overflow:hidden}
+  .photo .ptxt{position:relative;z-index:1;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+  .photo.add{background:var(--bg);color:var(--malbec);place-items:center;border:1.5px dashed var(--line-strong);cursor:pointer;font-size:12.5px;text-align:center;flex-direction:column;gap:4px}
+  .photo.add:hover{border-color:var(--malbec)}
+  .mbody{padding:22px 28px 28px}
+  .secttl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 12px}
+  .dimgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+  .dimcard{background:var(--bg);border-radius:10px;padding:12px 14px}
+  .dimcard .dl{font-size:12.5px;color:var(--muted);font-weight:500}
+  .dimcard .dv{font-family:"Fraunces",serif;font-weight:600;font-size:22px;margin-top:3px;display:flex;align-items:baseline;gap:5px}
+  .dimcard .dv .of{font-size:12px;color:var(--muted);font-weight:400;font-family:"Hanken Grotesk",sans-serif}
+  .dimcard .dv .stars{font-size:13px;color:var(--amber);letter-spacing:1px}
+  .dimcard.no .dv{color:var(--malbec);font-size:15px;font-family:"Hanken Grotesk",sans-serif;font-weight:600}
+  .dimcard.pend .dv{color:var(--muted);font-size:14px;font-family:"Hanken Grotesk",sans-serif;font-weight:500}
+  .mactions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+  .btn{font:inherit;font-weight:600;font-size:14px;border-radius:10px;padding:11px 18px;cursor:pointer;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:7px}
+  .btn:hover{border-color:var(--malbec)}
+  .btn.primary{background:var(--malbec);border-color:var(--malbec);color:#fff}
+  .btn.primary:hover{background:#54123a}
+  .btn .gg{font-family:"Fraunces",serif;font-weight:700;color:var(--gblue)}
+  .reviews{display:flex;flex-direction:column;gap:14px}
+  .review{border-top:1px solid var(--line);padding-top:14px}
+  .review .rtop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+  .review .rwho{font-weight:600;font-size:14px}
+  .review .ract{font-size:11.5px;color:var(--oliva);font-weight:600;background:var(--oliva-soft);padding:2px 8px;border-radius:6px}
+  .review .rmeta{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:10px;margin-bottom:7px}
+  .review .rmeta b{color:var(--ink)}
+  .review .rtext{font-size:14px;color:var(--ink);opacity:.85}
+  .review .rphoto{margin-top:9px;height:120px;width:160px;border-radius:9px;object-fit:cover}
+
+  .formwrap{display:none}.formwrap.show{display:block}
+  .field{margin-bottom:18px}
+  .field>label{display:block;font-size:13px;font-weight:600;margin-bottom:8px}
+  .field .req{color:var(--malbec)}
+  .starset{display:flex;gap:4px}
+  .starset .s{font-size:26px;color:var(--line-strong);cursor:pointer;line-height:1;transition:color .1s}
+  .starset .s.on{color:var(--amber)}
+  .novista-row{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--muted)}
+  .novista-row input{width:16px;height:16px;accent-color:var(--malbec);cursor:pointer}
+  .selchips{display:flex;flex-wrap:wrap;gap:7px}
+  .selchip{font:inherit;font-size:13px;font-weight:500;padding:7px 12px;border-radius:999px;cursor:pointer;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink)}
+  .selchip[aria-pressed="true"]{background:var(--malbec);border-color:var(--malbec);color:#fff}
+  .field input[type=number],.field textarea{width:100%;font:inherit;font-size:15px;border:1px solid var(--line-strong);border-radius:9px;padding:10px 12px;background:var(--surface);color:var(--ink);outline:none}
+  .field input[type=number]:focus,.field textarea:focus{border-color:var(--malbec)}
+  .field textarea{resize:vertical;min-height:64px}
+  .pricewrap{position:relative}
+  .pricewrap::before{content:"$";position:absolute;left:12px;top:11px;color:var(--muted)}
+  .pricewrap input{padding-left:24px}
+  .formfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+  .filephoto{margin-top:10px;height:90px;border-radius:9px;display:none}
+  .filephoto.show{display:block}
+
+  @media (max-width:640px){
+    .ftail{margin-left:0;width:100%;justify-content:space-between}
+    .budget{min-width:100%}
+    .modal h2{font-size:25px}
+  }
+  @media (prefers-reduced-motion:reduce){.card,.modal{animation:none}*{transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="wrap topbar">
+  <div class="brandmini">em<b>bodega</b>te</div>
+  <a class="cafecito" href="https://cafecito.app/" target="_blank" rel="noopener">☕ Invitame un cafecito</a>
+</div>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Todas las bodegas de Mendoza</div>
+    <h1>¿A cuál <em>vas</em>?</h1>
+    <p class="lede">Pedímelo como te salga y te filtro las que valen la pena para lo que buscás.</p>
+    <div class="nlbox">
+      <div class="nlrow">
+        <div class="nlfield">
+          <input id="nlInput" type="text" placeholder="Almuerzo con linda vista hasta 50 lucas en Valle de Uco" autocomplete="off">
+          <button id="nlBtn">Buscar</button>
+        </div>
+        <select class="sortsel sorttop" id="sort">
+          <option value="popular">Más buscadas</option>
+          <option value="rating">Mejor puntuadas</option>
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+        </select>
+      </div>
+      <div class="nlhints">
+        <span class="lab">Probá:</span>
+        <button class="nlhint">degustación barata cerca del centro</button>
+        <button class="nlhint">picnic con vista en Uco</button>
+        <button class="nlhint">dónde almorzar sin gastar una fortuna</button>
+      </div>
+      <div class="understood" id="understood"></div>
+    </div>
+  </div>
+</header>
+
+<div class="filters">
+  <div class="wrap">
+    <div class="frow">
+      <div class="fgroup">
+        <span class="title">Zona</span>
+        <select class="sortsel zonasel" id="zonaSel">
+          <option value="todas">Todas las zonas</option>
+          <option value="lujan">Luján de Cuyo</option>
+          <option value="maipu">Maipú</option>
+          <option value="uco">Valle de Uco</option>
+          <option value="chacras">Chacras</option>
+        </select>
+      </div>
+      <div class="fgroup">
+        <span class="title">Qué querés hacer</span>
+        <div class="chips" id="planChips">
+          <button class="chip plan" data-plan="visita" aria-pressed="false">Visita</button>
+          <button class="chip plan" data-plan="degustacion" aria-pressed="false">Degustación</button>
+          <button class="chip plan" data-plan="almuerzo" aria-pressed="false">Almuerzo</button>
+          <button class="chip plan" data-plan="picnic" aria-pressed="false">Picnic</button>
+          <button class="chip plan" data-plan="actividades" aria-pressed="false">Actividades</button>
+        </div>
+      </div>
+      <div class="fgroup">
+        <span class="title">Extras</span>
+        <div class="chips" id="extraChips">
+          <button class="chip extra" data-extra="vista" aria-pressed="false">★ Con linda vista</button>
+        </div>
+      </div>
+      <div class="fgroup budget">
+        <span class="title">Presupuesto · <span class="bval off" id="budgetVal">sin límite</span></span>
+        <input type="range" id="budget" min="0" max="130000" step="5000" value="130000">
+      </div>
+      <div class="ftail">
+        <button class="clearbtn" id="clear" disabled>Limpiar filtros</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+    <div class="resultline">
+      <span class="rcount" id="count">0</span>
+      <span id="countCtx">bodegas · más buscadas primero</span>
+      <span class="rcov">· el listado completo llega a las ~230 de Mendoza</span>
+    </div>
+    <div class="adslot">
+      <div class="adleft">
+        <span class="adlabel">Espacio destacado</span>
+        <span class="adtitle">Tu bodega o tu marca, acá arriba</span>
+      </div>
+      <button class="adcta">Quiero aparecer</button>
+    </div>
+    <div class="grid" id="grid"></div>
+    <p class="protonote">
+      <b>Prototipo.</b> Las 12 bodegas son reales; precios, puntuaciones y fotos son ilustrativos. La estrella azul es Google (existe desde el día uno); la bordó es la comunidad de embodegate, que aparece cuando llegan reseñas nativas. El buscador usa Claude para interpretar lo que escribís, con un intérprete local de respaldo.
+    </p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap winner">
+    <div>
+      <div class="fbrand">em<b>bodega</b>te</div>
+      <p class="fnote">Un proyecto independiente, hecho en Mendoza para que elegir bodega deje de ser una lotería.</p>
+    </div>
+    <a class="cafecito" href="https://cafecito.app/" target="_blank" rel="noopener">☕ Invitame un cafecito</a>
+  </div>
+</footer>
+
+<div class="overlay" id="overlay"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
+
+<script>
+const PLAN_LABEL={visita:"Visita",degustacion:"Degustación",almuerzo:"Almuerzo",picnic:"Picnic",actividades:"Actividades"};
+const ZLABEL={lujan:"Luján de Cuyo",maipu:"Maipú",uco:"Valle de Uco",chacras:"Chacras"};
+const MAX_BUDGET=130000;
+
+// g/gr = Google (rating/cant). vista = dato de research (0-5, null = no tiene). reviews = nativas (comunidad)
+const BODEGAS=[
+  {id:1,nombre:"Catena Zapata",zona:"lujan",loc:"Agrelo, Luján de Cuyo",pop:98,g:4.8,gr:5400,vista:4.6,
+   desc:"La pirámide maya de Agrelo y la bodega argentina más famosa del mundo.",
+   planes:{visita:null,degustacion:65000,almuerzo:110000,picnic:null,actividades:null},
+   reviews:[{who:"Lucía M.",act:"degustacion",pago:65000,vista:5,calidadPrecio:4,servicio:5,comida:null,llego:"remis",con:"pareja",idiomas:["es","en"],text:"La visita vale cada peso. El edificio es una locura y la cata impecable. Reservá con mucha anticipación.",foto:null}]},
+  {id:2,nombre:"Zuccardi Piedra Infinita",zona:"uco",loc:"Paraje Altamira, Valle de Uco",pop:95,g:4.9,gr:3100,vista:5.0,
+   desc:"Elegida varias veces mejor bodega del mundo. Arquitectura de piedra y un restaurante de altísimo nivel.",
+   planes:{visita:null,degustacion:55000,almuerzo:120000,picnic:null,actividades:null},
+   reviews:[{who:"Tomás R.",act:"almuerzo",pago:120000,vista:5,calidadPrecio:4,servicio:5,comida:5,llego:"auto",con:"pareja",idiomas:["es"],text:"El almuerzo fue de los mejores de mi vida. La vista al valle desde la mesa es irrepetible.",foto:null}]},
+  {id:3,nombre:"Bodega Norton",zona:"lujan",loc:"Perdriel, Luján de Cuyo",pop:90,g:4.6,gr:3200,vista:4.5,
+   desc:"La cava subterránea más grande de Sudamérica, restaurante con vista a los Andes y el famoso blending game.",
+   planes:{visita:18000,degustacion:30000,almuerzo:75000,picnic:42000,actividades:35000},
+   reviews:[{who:"Sofía D.",act:"almuerzo",pago:75000,vista:5,calidadPrecio:4,servicio:4,comida:4,llego:"tour",con:"familia",idiomas:["es","pt"],text:"Linda experiencia con los chicos, el blending game les encantó. La terraza tiene una vista hermosa.",foto:null}]},
+  {id:4,nombre:"Trapiche",zona:"maipu",loc:"Coquimbito, Maipú",pop:85,g:4.5,gr:4100,vista:3.8,
+   desc:"Edificio de 1883 perfectamente restaurado donde historia y vanguardia conviven.",
+   planes:{visita:15000,degustacion:28000,almuerzo:68000,picnic:null,actividades:null},reviews:[]},
+  {id:5,nombre:"Bodega López",zona:"maipu",loc:"Maipú centro",pop:88,g:4.4,gr:6800,vista:null,
+   desc:"120+ años de tradición y la mejor puerta de entrada: visita gratis y a 5 minutos del metrotranvía.",
+   planes:{visita:0,degustacion:12000,almuerzo:38000,picnic:null,actividades:null},
+   reviews:[{who:"Martín G.",act:"visita",pago:0,vista:null,calidadPrecio:5,servicio:4,comida:null,llego:"publico",con:"amigos",idiomas:["es"],text:"Gratis y muy buena para arrancar. No tiene vista a viñedos (está en pleno Maipú) pero la bodega histórica vale.",foto:null}]},
+  {id:6,nombre:"Salentein",zona:"uco",loc:"Tunuyán, Valle de Uco",pop:82,g:4.7,gr:2900,vista:4.8,
+   desc:"Bodega-templo con centro cultural y galería de arte propios, entre viñedos de altura.",
+   planes:{visita:22000,degustacion:38000,almuerzo:82000,picnic:48000,actividades:null},reviews:[]},
+  {id:7,nombre:"Casa Vigil — El Enemigo",zona:"maipu",loc:"Chachingo, Maipú",pop:92,g:4.7,gr:5600,vista:4.0,
+   desc:"La casa de Alejandro Vigil. Uno de los almuerzos más pedidos de Mendoza.",
+   planes:{visita:null,degustacion:32000,almuerzo:72000,picnic:null,actividades:null},reviews:[]},
+  {id:8,nombre:"Susana Balbo Wines",zona:"lujan",loc:"Agrelo, Luján de Cuyo",pop:74,g:4.7,gr:2200,vista:4.3,
+   desc:"La primera enóloga mujer de Argentina. Maridajes finos y experiencias de gran nivel.",
+   planes:{visita:20000,degustacion:40000,almuerzo:95000,picnic:null,actividades:null},reviews:[]},
+  {id:9,nombre:"Bodega Séptima",zona:"lujan",loc:"Agrelo, Luján de Cuyo",pop:78,g:4.5,gr:3400,vista:4.6,
+   desc:"Arquitectura de pirca, espumantes y un espacio culinario con vista. Tapeo y picnic los findes.",
+   planes:{visita:14000,degustacion:27000,almuerzo:60000,picnic:38000,actividades:null},reviews:[]},
+  {id:10,nombre:"Clos de Chacras",zona:"chacras",loc:"Chacras de Coria",pop:70,g:4.5,gr:2700,vista:3.9,
+   desc:"Bodega familiar a 10 minutos del centro, con restaurante y hotel boutique. Ideal sin auto.",
+   planes:{visita:12000,degustacion:24000,almuerzo:48000,picnic:null,actividades:null},
+   reviews:[{who:"Caro V.",act:"almuerzo",pago:48000,vista:4,calidadPrecio:5,servicio:5,comida:4,llego:"remis",con:"pareja",idiomas:["es"],text:"Relación precio-calidad imbatible tan cerca del centro. El patio es divino, vista justa pero el lugar es un encanto.",foto:null}]},
+  {id:11,nombre:"Durigutti Family Winemakers",zona:"lujan",loc:"Las Compuertas, Luján de Cuyo",pop:68,g:4.8,gr:1600,vista:4.4,
+   desc:"Puesto 11 del ranking The World's Best Vineyards 2025. Vino, gastronomía y personalidad propia.",
+   planes:{visita:25000,degustacion:42000,almuerzo:88000,picnic:null,actividades:null},reviews:[]},
+  {id:12,nombre:"Domaine Bousquet",zona:"uco",loc:"Gualtallary, Valle de Uco",pop:64,g:4.5,gr:2400,vista:4.7,
+   desc:"Pioneros del vino orgánico en Gualtallary. Picnic entre viñedos y cabalgatas con la cordillera de fondo.",
+   planes:{visita:16000,degustacion:30000,almuerzo:55000,picnic:34000,actividades:28000},reviews:[]},
+];
+
+const PHOTO_GRADS=[["#6A1B47","#9C3A6E"],["#6F7741","#9BA45F"],["#BE8419","#E0A93B"],["#54123A","#7E2A59"],["#4A5230","#7B8550"]];
+function photoBg(b){const u=(b.userPhotos&&b.userPhotos[0]);if(u)return `url('${u}')`;const p=PHOTO_GRADS[b.id%PHOTO_GRADS.length];return `linear-gradient(135deg,${p[0]},${p[1]})`}
+
+const state={zona:"todas",planes:new Set(),vista:false,budget:MAX_BUDGET,sort:"popular"};
+const fmt=n=>n===0?"Gratis":"$"+n.toLocaleString("es-AR");
+const stars=n=>"★★★★★".slice(0,Math.round(n))+"☆☆☆☆☆".slice(0,5-Math.round(n));
+const kfmt=n=>n>=1000?(n/1000).toFixed(1).replace(".",",").replace(",0","")+"k":(""+n);
+
+function comReviews(b){return b.reviews||[]}
+function comScore(b){
+  const rs=comReviews(b);if(!rs.length)return null;let sum=0,n=0;
+  rs.forEach(r=>["vista","calidadPrecio","servicio","comida"].forEach(k=>{if(typeof r[k]==="number"&&r[k]>0){sum+=r[k];n++}}));
+  return n?sum/n:null;
+}
+function comDim(b,key){const vals=comReviews(b).map(r=>r[key]).filter(v=>typeof v==="number"&&v>0);return vals.length?vals.reduce((a,c)=>a+c,0)/vals.length:null}
+
+function precioRelevante(b){
+  const off=Object.entries(b.planes).filter(([,v])=>v!==null);
+  if(state.planes.size){const sel=off.filter(([k])=>state.planes.has(k)).map(([,v])=>v);return sel.length?Math.min(...sel):null}
+  return off.length?Math.min(...off.map(([,v])=>v)):null;
+}
+function desdeGeneral(b){const v=Object.values(b.planes).filter(x=>x!==null);return v.length?Math.min(...v):null}
+function matches(b){
+  if(state.zona!=="todas"&&b.zona!==state.zona)return false;
+  if(state.planes.size&&![...state.planes].some(p=>b.planes[p]!==null))return false;
+  if(state.vista&&!(b.vista>=4))return false;
+  if(state.budget<MAX_BUDGET){const pr=precioRelevante(b);if(pr!==null&&pr>state.budget)return false}
+  return true;
+}
+function mapsLink(b){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(b.nombre+" bodega "+b.loc)}
+
+const grid=document.getElementById("grid"),countEl=document.getElementById("count"),countCtx=document.getElementById("countCtx"),clearBtn=document.getElementById("clear");
+function animateCount(to){
+  const from=parseInt(countEl.textContent)||0;if(from===to){countEl.textContent=to;return}
+  const dur=320,t0=performance.now();
+  (function tick(now){const p=Math.min((now-t0)/dur,1),e=1-Math.pow(1-p,3);countEl.textContent=Math.round(from+(to-from)*e);if(p<1)requestAnimationFrame(tick)})(performance.now());
+}
+
+function render(){
+  let list=BODEGAS.filter(matches);
+  list.sort((a,b)=>{
+    if(state.sort==="popular")return b.pop-a.pop;
+    if(state.sort==="rating")return (comScore(b)??b.g)-(comScore(a)??a.g);
+    const pa=precioRelevante(a)??Infinity,pb=precioRelevante(b)??Infinity;
+    return state.sort==="price-asc"?pa-pb:pb-pa;
+  });
+  animateCount(list.length);
+  countCtx.textContent=(list.length===1?"bodega":"bodegas")+" · "+describeFilters();
+  clearBtn.disabled=!(state.zona!=="todas"||state.planes.size||state.vista||state.budget<MAX_BUDGET);
+
+  if(!list.length){grid.innerHTML=`<div class="empty"><h3>No hay bodegas con esos filtros</h3><p>Probá subir el presupuesto o sacar algún filtro.</p><button onclick="window.__clear()">Limpiar filtros</button></div>`;return}
+
+  grid.innerHTML=list.map(b=>{
+    const desde=desdeGeneral(b),cs=comScore(b),nrev=comReviews(b).length;
+    const tags=Object.entries(b.planes).filter(([,v])=>v!==null).map(([k])=>`<span class="ptag${state.planes.has(k)?" hit":""}">${PLAN_LABEL[k]}</span>`).join("");
+    const selOff=[...state.planes].filter(p=>b.planes[p]!==null);
+    let pp="";
+    if(selOff.length){const ch=selOff.reduce((a,c)=>b.planes[c]<b.planes[a]?c:a,selOff[0]);pp=`<div class="planprice"><div class="pl-lab">${PLAN_LABEL[ch]}</div><div class="pl-val">${fmt(b.planes[ch])}</div></div>`}
+    const comChip=cs!==null
+      ?`<span class="rchip c"><span class="star">★</span>${cs.toFixed(1)} <span class="rsrc">comunidad · ${nrev}</span></span>`
+      :`<span class="rchip none">Sin reseñas propias aún</span>`;
+    const cp=comDim(b,"calidadPrecio"),sv=comDim(b,"servicio");
+    let dims=b.vista===null?`<span class="dimmini novista">Sin vista a viñedos</span>`:`<span class="dimmini">Vista <b>${b.vista.toFixed(1)}</b></span>`;
+    if(cp!==null)dims+=`<span class="dimmini">Calidad-precio <b>${cp.toFixed(1)}</b></span>`;
+    if(sv!==null)dims+=`<span class="dimmini">Servicio <b>${sv.toFixed(1)}</b></span>`;
+    if(cs===null)dims+=`<span class="dimmini first">¿Fuiste? Dejá la primera reseña</span>`;
+    return `<article class="card" onclick="window.__open(${b.id})">
+      <div class="cimg" style="background-image:${photoBg(b)}"><span class="czone">${ZLABEL[b.zona]}</span><span class="cname">${b.nombre}</span></div>
+      <div class="cbody">
+        <div class="cratings">
+          <a class="rchip g" href="${mapsLink(b)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span class="star">★</span>${b.g.toFixed(1)} <span class="rsrc">Google · ${kfmt(b.gr)}</span><span class="gtip">Ver su ficha real en Google ↗</span></a>
+          ${comChip}
+        </div>
+        <div class="loc">${b.loc}</div>
+        <p class="desc">${b.desc}</p>
+        <div class="dimrow">${dims}</div>
+        <div class="planes">${tags}</div>
+        <div class="pricerow"><div><div class="from-lab">Desde</div><div class="from-val ${desde===0?"free":""}">${fmt(desde)}${desde!==0?' <span class="per">/ persona</span>':""}</div></div>${pp}</div>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+function describeFilters(){
+  const p=[];
+  if(state.planes.size)p.push([...state.planes].map(x=>PLAN_LABEL[x].toLowerCase()).join(" o "));
+  if(state.vista)p.push("con linda vista");
+  if(state.zona!=="todas")p.push("en "+ZLABEL[state.zona]);
+  if(state.budget<MAX_BUDGET)p.push("hasta $"+state.budget.toLocaleString("es-AR")+" p/p");
+  if(!p.length)return state.sort==="popular"?"más buscadas primero":"";
+  return p.join(" · ");
+}
+
+/* NL search */
+const ZONAS={lujan:["lujan","luján","agrelo","perdriel","compuertas","vistalba"],maipu:["maipu","maipú","coquimbito","chachingo","russell"],uco:["uco","tunuyan","tunuyán","tupungato","gualtallary","altamira","vista flores"],chacras:["chacras","coria"]};
+const PLANES_KW={almuerzo:["almuerzo","almorzar","comer","comida","gastronom","cena","cenar"],degustacion:["degustaci","cata","catar","probar vino","vinos"],visita:["visita","visitar","recorr","tour por"],picnic:["picnic","aire libre","tabla"],actividades:["cabalgat","caballo","bici","bicicleta","actividad","blending"]};
+function parseLocal(q){
+  const s=q.toLowerCase();const out={zona:null,planes:[],precio_max:null,vista:null,orden:null};
+  for(const[z,kw]of Object.entries(ZONAS))if(kw.some(k=>s.includes(k))){out.zona=z;break}
+  for(const[p,kw]of Object.entries(PLANES_KW))if(kw.some(k=>s.includes(k)))out.planes.push(p);
+  let m=s.match(/(\d+)\s*(k|lucas?|luca|mil|mangos?)/);
+  if(m){let n=parseInt(m[1]);if(/k|luca|mil/.test(m[2]))n*=1000;out.precio_max=n}else{m=s.match(/(\d{4,6})/);if(m)out.precio_max=parseInt(m[1])}
+  if(/sin vista/.test(s))out.vista=false;else if(/(con )?vista|paisaje|cordillera|viñedo/.test(s))out.vista=true;
+  if(/barat|económic|economic|menor precio|sin gastar|fortuna|accesible/.test(s))out.orden="price-asc";
+  return out;
+}
+async function parseAI(q){
+  const sys=`Sos un parser de búsqueda para un directorio de bodegas de Mendoza, Argentina. Convertí el texto del usuario (español rioplatense, puede traer lunfardo) en un JSON con EXACTAMENTE estas claves:
+{"zona":"lujan"|"maipu"|"uco"|"chacras"|null,"planes":array de ["visita","degustacion","almuerzo","picnic","actividades"],"precio_max":número en pesos o null,"vista":true|false|null,"orden":"rating"|"price-asc"|"price-desc"|null}
+"lucas"/"luca"/"mil"/"mangos"/"k" multiplican por mil (50 lucas=50000). "barato"/"sin gastar una fortuna"/"económico"=>orden "price-asc". "linda vista"/"con vista"/"paisaje"=>vista true. "sin vista"=>vista false. Valle de Uco incluye Tunuyán, Tupungato, Gualtallary, Altamira. Respondé SOLO el JSON, sin texto ni backticks.`;
+  const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,system:sys,messages:[{role:"user",content:q}]})});
+  const data=await res.json();const text=data.content.filter(b=>b.type==="text").map(b=>b.text).join("");
+  return JSON.parse(text.replace(/```json|```/g,"").trim());
+}
+function applyParsed(p){
+  state.zona=p.zona||"todas";state.planes=new Set(Array.isArray(p.planes)?p.planes.filter(x=>PLAN_LABEL[x]):[]);
+  state.vista=p.vista===true;state.budget=(typeof p.precio_max==="number"&&p.precio_max>0)?Math.min(p.precio_max,MAX_BUDGET):MAX_BUDGET;
+  state.sort=(p.orden==="price-asc"||p.orden==="price-desc"||p.orden==="rating")?p.orden:"popular";
+  syncUI();showUnderstood();render();
+}
+function showUnderstood(){
+  const u=document.getElementById("understood"),chips=[];
+  if(state.planes.size)chips.push([...state.planes].map(x=>PLAN_LABEL[x]).join(" / "));
+  if(state.vista)chips.push("con vista");if(state.zona!=="todas")chips.push(ZLABEL[state.zona]);
+  if(state.budget<MAX_BUDGET)chips.push("hasta $"+state.budget.toLocaleString("es-AR"));
+  if(state.sort==="price-asc")chips.push("más baratas primero");
+  if(!chips.length){u.classList.remove("show");return}
+  u.innerHTML='<span>Entendí:</span>'+chips.map(c=>`<span class="uchip">${c}</span>`).join("");u.classList.add("show");
+}
+async function runNL(q){
+  if(!q.trim())return;const btn=document.getElementById("nlBtn");btn.disabled=true;btn.textContent="Interpretando…";
+  let parsed;try{parsed=await Promise.race([parseAI(q),new Promise((_,r)=>setTimeout(()=>r("t"),9000))])}catch(e){parsed=parseLocal(q)}
+  if(!parsed||typeof parsed!=="object")parsed=parseLocal(q);applyParsed(parsed);btn.disabled=false;btn.textContent="Buscar";
+}
+function syncUI(){
+  document.getElementById("zonaSel").value=state.zona;
+  document.querySelectorAll("#planChips .chip").forEach(c=>c.setAttribute("aria-pressed",state.planes.has(c.dataset.plan)));
+  document.querySelectorAll("#extraChips .chip").forEach(c=>c.setAttribute("aria-pressed",state.vista&&c.dataset.extra==="vista"));
+  const be=document.getElementById("budget"),bv=document.getElementById("budgetVal");be.value=state.budget;
+  if(state.budget>=MAX_BUDGET){bv.textContent="sin límite";bv.classList.add("off")}else{bv.textContent="hasta $"+state.budget.toLocaleString("es-AR");bv.classList.remove("off")}
+  document.getElementById("sort").value=state.sort;
+}
+
+/* Modal */
+const overlay=document.getElementById("overlay"),modal=document.getElementById("modal");
+const LLEGO={auto:"En auto",remis:"Remís / taxi",tour:"Tour / bus",bici:"En bici",publico:"Transporte público"};
+const CON={pareja:"En pareja",familia:"Familia con chicos",amigos:"Amigos / grupo",solo:"Solo/a"};
+const IDIOMA={es:"Español",en:"Inglés",pt:"Portugués"};
+function dimCardHTML(label,val,pending){
+  if(pending)return `<div class="dimcard pend"><div class="dl">${label}</div><div class="dv">Aún sin reseñas</div></div>`;
+  if(val===null||val===undefined)return `<div class="dimcard no"><div class="dl">${label}</div><div class="dv">Sin vista a viñedos</div></div>`;
+  return `<div class="dimcard"><div class="dl">${label}</div><div class="dv">${val.toFixed(1)}<span class="of">/5</span> <span class="stars">${stars(val)}</span></div></div>`;
+}
+function reviewHTML(r){
+  const meta=[];
+  if(typeof r.pago==="number")meta.push(`Pagó <b>${fmt(r.pago)}</b>`);
+  if(r.llego)meta.push(LLEGO[r.llego]);if(r.con)meta.push(CON[r.con]);
+  if(r.idiomas&&r.idiomas.length)meta.push("Atención: "+r.idiomas.map(i=>IDIOMA[i]).join(", "));
+  const sub=[];
+  if(r.vista===null)sub.push("Sin vista");else if(r.vista)sub.push("Vista "+r.vista);
+  if(r.calidadPrecio)sub.push("Calidad-precio "+r.calidadPrecio);if(r.servicio)sub.push("Servicio "+r.servicio);if(r.comida)sub.push("Comida "+r.comida);
+  return `<div class="review"><div class="rtop"><span class="rwho">${r.who}</span><span class="ract">${PLAN_LABEL[r.act]||r.act}</span></div>
+    <div class="rmeta">${meta.map(m=>`<span>${m}</span>`).join("")}</div>
+    <div class="rmeta" style="opacity:.85">${sub.map(s=>`<span>${s}/5</span>`).join("")}</div>
+    ${r.text?`<div class="rtext">${r.text}</div>`:""}${r.foto?`<img class="rphoto" src="${r.foto}" alt="">`:""}</div>`;
+}
+function openDetail(id){
+  const b=BODEGAS.find(x=>x.id===id);if(!b)return;
+  const cs=comScore(b),nrev=comReviews(b).length;
+  const photos=(b.userPhotos||[]).map(src=>`<div class="photo" style="background-image:url('${src}')"><span class="ptxt">Comunidad</span></div>`).join("")
+    +[0,1,2].map(i=>{const p=PHOTO_GRADS[(b.id+i)%PHOTO_GRADS.length];return `<div class="photo" style="background:linear-gradient(135deg,${p[0]},${p[1]})"><span class="ptxt">${b.nombre}</span></div>`}).join("");
+  const comChip=cs!==null?`<span class="rchip c"><span class="star">★</span>${cs.toFixed(1)} <span class="rsrc">comunidad · ${nrev}</span></span>`:`<span class="rchip none">Sin reseñas propias aún</span>`;
+  modal.innerHTML=`
+    <div class="mhead"><div><h2>${b.nombre}</h2><div class="mloc">${b.loc}</div>
+      <div class="mrate"><a class="rchip g" href="${mapsLink(b)}" target="_blank" rel="noopener"><span class="star">★</span>${b.g.toFixed(1)} <span class="rsrc">Google · ${kfmt(b.gr)} ↗</span></a>${comChip}</div>
+    </div><button class="closeb" onclick="window.__close()" aria-label="Cerrar">✕</button></div>
+    <div class="photos"><label class="photo add">+ Subir foto<input type="file" accept="image/*" hidden onchange="window.__addPhoto(${b.id},this)"></label>${photos}</div>
+    <div class="mbody">
+      <p class="secttl">Puntuaciones de la comunidad</p>
+      <div class="dimgrid">${dimCardHTML("Vista",b.vista)}${dimCardHTML("Calidad-precio",comDim(b,"calidadPrecio"),cs===null)}${dimCardHTML("Servicio",comDim(b,"servicio"),cs===null)}${dimCardHTML("Comida",comDim(b,"comida"),cs===null)}</div>
+      <div class="mactions"><button class="btn primary" onclick="window.__reviewForm(${b.id})">Dejar tu reseña</button><a class="btn" href="${mapsLink(b)}" target="_blank" rel="noopener"><span class="gg">G</span> Ver reseñas en Google ↗</a></div>
+      <div id="reviewArea"><p class="secttl">Reseñas de la comunidad (${nrev})</p><div class="reviews">${nrev?b.reviews.map(reviewHTML).join(""):'<p class="hint">Todavía no hay reseñas nativas. Sé la primera persona en contar cómo te fue — eso es lo que Google no te da.</p>'}</div></div>
+    </div>`;
+  overlay.classList.add("show");document.body.style.overflow="hidden";
+}
+let rf={vista:0,novista:false,calidadPrecio:0,servicio:0,comida:0,act:null,con:null,llego:null,idiomas:new Set(),foto:null};
+function starsetHTML(dim){return `<div class="starset" data-dim="${dim}">${[1,2,3,4,5].map(n=>`<span class="s" data-n="${n}" onclick="window.__setStar('${dim}',${n})">★</span>`).join("")}</div>`}
+function selchipsHTML(group,opts){return `<div class="selchips" data-group="${group}">${Object.entries(opts).map(([k,v])=>`<button class="selchip" data-val="${k}" onclick="window.__selChip('${group}','${k}')">${v}</button>`).join("")}</div>`}
+function openReviewForm(id){
+  const b=BODEGAS.find(x=>x.id===id);
+  rf={vista:0,novista:false,calidadPrecio:0,servicio:0,comida:0,act:null,con:null,llego:null,idiomas:new Set(),foto:null};
+  const actOpts={};Object.keys(PLAN_LABEL).forEach(k=>{if(b.planes[k]!==null)actOpts[k]=PLAN_LABEL[k]});
+  document.getElementById("reviewArea").innerHTML=`
+    <p class="secttl">Tu reseña de ${b.nombre}</p>
+    <div class="formwrap show">
+      <div class="field"><label>¿Qué hiciste? <span class="req">*</span></label>${selchipsHTML("act",actOpts)}</div>
+      <div class="field"><label>Vista</label>${starsetHTML("vista")}<div class="novista-row"><input type="checkbox" id="nv" onchange="window.__noVista(this)"><label for="nv" style="font-weight:400;margin:0">No tiene vista a viñedos / cordillera</label></div></div>
+      <div class="field"><label>Calidad-precio <span class="req">*</span></label>${starsetHTML("calidadPrecio")}</div>
+      <div class="field"><label>Servicio / atención <span class="req">*</span></label>${starsetHTML("servicio")}</div>
+      <div class="field"><label>Comida <span class="hint" style="display:inline">(si comiste)</span></label>${starsetHTML("comida")}</div>
+      <div class="field"><label>¿Cuánto pagaste por persona?</label><div class="pricewrap"><input type="number" id="rfPago" placeholder="50000" min="0"></div></div>
+      <div class="field"><label>¿Cómo llegaste?</label>${selchipsHTML("llego",LLEGO)}</div>
+      <div class="field"><label>¿Con quién fuiste?</label>${selchipsHTML("con",CON)}</div>
+      <div class="field"><label>Atención en</label>${selchipsHTML("idiomas",IDIOMA)}<span class="hint">Podés marcar varios</span></div>
+      <div class="field"><label>Contanos cómo te fue</label><textarea id="rfText" placeholder="Lo bueno, lo no tanto, algún consejo…"></textarea></div>
+      <div class="field"><label>Sumá una foto</label><label class="btn" style="cursor:pointer">Elegir imagen<input type="file" accept="image/*" hidden onchange="window.__rfPhoto(this)"></label><img class="filephoto" id="rfPrev"></div>
+      <div class="formfoot"><button class="btn" onclick="window.__open(${b.id})">Cancelar</button><button class="btn primary" onclick="window.__submitReview(${b.id})">Publicar reseña</button></div>
+    </div>`;
+  document.getElementById("reviewArea").scrollIntoView({behavior:"smooth",block:"start"});
+}
+window.__setStar=function(dim,n){if(dim==="vista"&&rf.novista)return;rf[dim]=n;document.querySelectorAll(`.starset[data-dim="${dim}"] .s`).forEach(s=>s.classList.toggle("on",+s.dataset.n<=n))};
+window.__noVista=function(cb){rf.novista=cb.checked;if(cb.checked){rf.vista=0;document.querySelectorAll('.starset[data-dim="vista"] .s').forEach(s=>s.classList.remove("on"))}};
+window.__selChip=function(group,val){
+  if(group==="idiomas"){if(rf.idiomas.has(val))rf.idiomas.delete(val);else rf.idiomas.add(val);document.querySelectorAll(`.selchips[data-group="idiomas"] .selchip`).forEach(c=>c.setAttribute("aria-pressed",rf.idiomas.has(c.dataset.val)))}
+  else{rf[group]=val;document.querySelectorAll(`.selchips[data-group="${group}"] .selchip`).forEach(c=>c.setAttribute("aria-pressed",c.dataset.val===val))}
+};
+window.__rfPhoto=function(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{rf.foto=e.target.result;const p=document.getElementById("rfPrev");p.src=rf.foto;p.classList.add("show")};r.readAsDataURL(f)};
+window.__addPhoto=function(id,input){const f=input.files[0];if(!f)return;const b=BODEGAS.find(x=>x.id===id);const r=new FileReader();r.onload=e=>{(b.userPhotos=b.userPhotos||[]).unshift(e.target.result);render();openDetail(id)};r.readAsDataURL(f)};
+window.__submitReview=function(id){
+  const b=BODEGAS.find(x=>x.id===id);
+  if(!rf.act){alert("Decinos qué actividad hiciste.");return}
+  if(!rf.calidadPrecio||!rf.servicio){alert("Puntuá al menos calidad-precio y servicio.");return}
+  const pagoVal=document.getElementById("rfPago").value;
+  b.reviews.unshift({who:"Vos",act:rf.act,pago:pagoVal?parseInt(pagoVal):null,vista:rf.novista?null:(rf.vista||null),calidadPrecio:rf.calidadPrecio,servicio:rf.servicio,comida:rf.comida||null,llego:rf.llego,con:rf.con,idiomas:[...rf.idiomas],text:document.getElementById("rfText").value.trim(),foto:rf.foto});
+  render();openDetail(id);
+};
+window.__open=openDetail;window.__reviewForm=openReviewForm;
+window.__close=function(){overlay.classList.remove("show");document.body.style.overflow=""};
+overlay.addEventListener("click",e=>{if(e.target===overlay)window.__close()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")window.__close()});
+
+document.getElementById("zonaSel").addEventListener("change",e=>{state.zona=e.target.value;render()});
+document.getElementById("planChips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const p=b.dataset.plan;state.planes.has(p)?state.planes.delete(p):state.planes.add(p);syncUI();render()});
+document.getElementById("extraChips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;state.vista=!state.vista;syncUI();render()});
+document.getElementById("budget").addEventListener("input",e=>{state.budget=+e.target.value;syncUI();render()});
+document.getElementById("sort").addEventListener("change",e=>{state.sort=e.target.value;render()});
+document.getElementById("nlBtn").addEventListener("click",()=>runNL(document.getElementById("nlInput").value));
+document.getElementById("nlInput").addEventListener("keydown",e=>{if(e.key==="Enter")runNL(e.target.value)});
+document.querySelectorAll(".nlhint").forEach(h=>h.addEventListener("click",()=>{document.getElementById("nlInput").value=h.textContent;runNL(h.textContent)}));
+window.__clear=function(){state.zona="todas";state.planes.clear();state.vista=false;state.budget=MAX_BUDGET;state.sort="popular";syncUI();document.getElementById("understood").classList.remove("show");render()};
+clearBtn.addEventListener("click",window.__clear);
+render();
+</script>
+</body>
+</html>

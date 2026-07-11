@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# notas de agente (no son parte del sitio)
+memory/
+.claude/settings.local.json
