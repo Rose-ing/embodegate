@@ -990,6 +990,183 @@ footer .flinks a:hover {
 .planlist .pval.free {
   color: var(--oliva);
 }
+/* ── Reseñas de la comunidad (fase 2) ── */
+.resenas {
+  margin-bottom: 26px;
+}
+.rteaser,
+.rmuted {
+  font-size: 14px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.rmuted {
+  border-style: solid;
+}
+.rlist {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 12px 0;
+}
+.ritem {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 13px 16px;
+}
+.ritem header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13.5px;
+}
+.ritem header time {
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: auto;
+}
+.ritem .rplan {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--oliva-soft);
+  color: var(--oliva);
+}
+.rdims {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 7px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.rdims b {
+  color: var(--ink);
+}
+.rtexto {
+  margin-top: 9px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.rfotos {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.rfotos img {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+.rborrar {
+  margin-top: 9px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--malbec);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0;
+}
+.rlogin {
+  margin-top: 10px;
+}
+.rform {
+  margin-top: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.rformttl {
+  font-family: var(--font-fraunces), serif;
+  font-weight: 600;
+  font-size: 18px;
+}
+.rcampo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.rcampo > span {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+.rcampo select,
+.rcampo input[type="number"],
+.rcampo textarea {
+  font: inherit;
+  font-size: 14.5px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  padding: 9px 11px;
+  background: var(--bg);
+  color: var(--ink);
+  max-width: 420px;
+}
+.rcampo textarea {
+  max-width: 100%;
+  resize: vertical;
+}
+.rcheck {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.estrellas {
+  display: flex;
+  gap: 2px;
+}
+.estrellas button {
+  font-size: 26px;
+  line-height: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--line-strong);
+  padding: 2px;
+  transition: color 0.12s, transform 0.12s;
+}
+.estrellas button.on {
+  color: var(--amber);
+}
+.estrellas button:hover {
+  transform: scale(1.15);
+}
+.rerror {
+  font-size: 13px;
+  color: #a3232f;
+  background: #fbeaec;
+  border-radius: 8px;
+  padding: 9px 12px;
+}
+.racciones {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .factions {
   display: flex;
   gap: 10px;

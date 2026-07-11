@@ -186,7 +186,10 @@ const SEED: Bodega[] = [
     slug: "casa-vigil-el-enemigo",
     nombre: "Casa Vigil — El Enemigo",
     zona: "maipu",
-    ubicacion: "Chachingo, Maipú",
+    // Dirección oficial: Videla Aranda 7008, paraje Chachingo, distrito Cruz de
+    // Piedra (Maipú). Mostramos el distrito: "Chachingo" a secas confunde con
+    // los wine bars homónimos de Vigil (p. ej. Chachingo Arístides).
+    ubicacion: "Cruz de Piedra, Maipú",
     placeId: null,
     pop: 92,
     vista: 4.0,

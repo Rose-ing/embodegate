@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Footer from "../../Footer";
+import Resenas from "./Resenas";
 import {
   type Plan,
   BODEGAS,
@@ -140,6 +141,8 @@ export default async function BodegaPage({
                 )}
               </>
             ) : null}
+
+            <Resenas slug={b.slug} planesOfrecidos={planes.map(([k]) => k)} />
 
             <div className="factions">
               <a className="btn primary" href={googleMapsUrl(b)} target="_blank" rel="noopener">

@@ -23,10 +23,14 @@ export default function PrivacidadPage() {
           <h1>Política de privacidad</h1>
           <p className="ldate">Última actualización: julio de 2026</p>
 
-          <h2>1. Sin cuentas ni registro</h2>
+          <h2>1. Cuentas</h2>
           <p>
-            embodegate no requiere registro y no pide datos personales para
-            usarse. No almacenamos perfiles de usuarios.
+            Navegar embodegate no requiere registro. Solo si querés dejar una
+            reseña te pedimos ingresar con tu cuenta de Google: guardamos tu
+            nombre público y un identificador para asociar tus reseñas, nada
+            más. Las reseñas, sus fotos y los datos de autenticación se
+            almacenan en Supabase, nuestro proveedor de base de datos. Podés
+            borrar tus reseñas cuando quieras desde la misma página.
           </p>
 
           <h2>2. Búsquedas en lenguaje natural</h2>

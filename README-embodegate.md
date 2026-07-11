@@ -115,8 +115,28 @@ La frecuencia de actualización: las top, cada 2-3 semanas; el resto, cuando pue
 
 ---
 
-## Roadmap (después del lanzamiento)
+## Fase 2: reseñas nativas (implementada, requiere configurar Supabase)
 
-- **Reseñas nativas (fase 2):** Supabase (Postgres + login con Google + storage de fotos). El formulario con dimensiones estandarizadas (vista con "sin vista", calidad-precio, servicio, comida, precio real pagado, cómo llegó, idiomas) ya está diseñado en la maqueta. Cada bodega ofrece para reseñar solo sus propios planes.
-- **Rating de comunidad** en las cards, al lado del de Google, cuando haya reseñas.
-- **Fotos de usuarios** vía Cloudinary.
+El código ya está: `app/bodega/[slug]/Resenas.tsx` (client-side puro, el sitio
+sigue siendo estático) + `supabase/schema.sql`. Sin configurar, las fichas
+muestran un teaser y nada se rompe. Para activarlas:
+
+1. Crear un proyecto gratis en [supabase.com](https://supabase.com).
+2. Correr `supabase/schema.sql` en el SQL Editor (crea la tabla `resenas` con
+   RLS y el bucket de fotos).
+3. Authentication → Providers → habilitar **Google** (client id/secret de
+   Google Cloud Console) y agregar el dominio en Redirect URLs.
+4. En `.env.local` y en Vercel:
+   `NEXT_PUBLIC_SUPABASE_URL=...` y `NEXT_PUBLIC_SUPABASE_ANON_KEY=...`
+   (la anon key es pública por diseño; la seguridad la da RLS).
+
+El formulario tiene las dimensiones de la maqueta: plan (solo los que la
+bodega ofrece), vista con "sin vista a viñedos", calidad-precio, servicio,
+comida, precio real pagado, cómo llegó, comentario y hasta 3 fotos. Una
+reseña por usuario/bodega/plan (upsert).
+
+## Roadmap (después de fase 2)
+
+- **Rating de comunidad en las cards** de la home, al lado del link a Google
+  (requiere agregación: vista materializada en Supabase o fetch batcheado).
+- **Moderación**: hoy el borrado es solo del autor; sumar reporte + revisión.
